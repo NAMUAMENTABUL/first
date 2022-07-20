@@ -1,38 +1,35 @@
 import streamlit as st
+import sqlite3
 
-if st.button('버튼'):
-    st.write('너는 병신')
-else:
-    st.write('안녕하세요!!!')
 
-text_contents = '''다운로드 받은 파일입니다.'''
-st.download_button('다운로드', text_contents)
+con = sqlite3.connect('db.db')
+cur = con.cursor()
 
-st.subheader('2. radio button test')
-food = st.radio(
-    "좋아하는 음식은 무엇인가요?",
-    ('초밥', '짜장면', '김치볶음밥'))
+def login_user(id,pw):
+    cur.execute(f"SELECT * FROM users WHERE id='{id}' and pwd='{pw}'")
+    return cur.fetchone()
 
-if food == '초밥':
-    st.write('You selected 초밥.')
-elif food == '짜장면':
-    st.write('You selected 짜장면.')
-elif food == '김치볶음밥':
-    st.write('You selected 김치볶음밥')
+menu = st.sidebar.selectbox('MENU',options=['로그인', '회원가입', '회원목록'])
 
-import streamlit as st
+if menu == '로그인':
+    st.subheader('로그인')
 
-st.subheader('1. Checkbox test')
-a = st.checkbox('1번')
-b = st.checkbox('2번')
-c = st.checkbox('3번')
+login_id = st.text_input('아이디',placeholder='아이디를 입력하세요')
+login_pw = st.text_input('비밀번호',placeholder='비밀번호를 입력하세요',type='password')
+login_btn = st.button('로그인')
+if login_btn:
+   user_info = login_user(login_id, login_pw)
+   st.write(user_info[4],'님 환영합니다.')
 
-if a:
-    st.write('1번을 선택하셨습니다.')
-if b:
-    st.write('2번을 선택하셨습니다.')
-if c:
-    st.write('3번을 선택하셨습니다.')
+st.sidebar.subheader('로그인')
+if menu == '회원가입':
+    st.subheader('회원가입')
+    st.sidebar.write('회원가입')
+if menu == '회원목록':
+    st.subheader('회원목록')
+    st.sidebar.write('회원목록')
+
+
 
 
 
