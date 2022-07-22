@@ -1,7 +1,10 @@
+import datareader as datareader
 import streamlit as st
 import sqlite3
 import pandas as pd
 import os.path
+import streamlit as st
+
 
 con = sqlite3.connect('db.db')
 cur = con.cursor()
@@ -10,7 +13,7 @@ def login_user(id, pw):
     cur.execute(f"SELECT * FROM users WHERE id='{id}' and pwd = '{pw}'")
     return cur.fetchone()
 
-menu = st.sidebar.selectbox('MENU', options=['로그인','회원가입','회원목록'])
+menu = st.sidebar.selectbox('MENU', options=['로그인','회원가입','회원목록','결제'])
 
 if menu == '로그인':
     st.subheader('로그인')
@@ -61,7 +64,44 @@ if menu == '회원목록':
     st.dataframe(df)
     st.sidebar.subheader('회원목록')
 
-    st.video('https://www.youtube.com/watch?v=kBedTDfk4vk')
+    st.video('https://youtu.be/5yAagIRjTds')
+
+
+
+if menu == '결제':
+    st.subheader('결제')
+    g_id = st.text_input('아이디', placeholder='아이디를 입력하세요')
+    g_pw = st.text_input('비밀번호',
+                             placeholder='비밀번호를 입력하세요',
+                             type='password')
+    g_option = st.radio('결제방식', options=['카드'], horizontal=True)
+    g_card = st.text_input('카드번호', placeholder='카드번호를 입력하세요')
+    g_cardpwd = st.text_input('카드비밀번호',placeholder='카드비밀번호를 입력하세요')
+    g_button = st.button('결제')
+    if g_button:
+        cur.execute(f"SELECT * FROM users "
+                    f"WHERE id = '{g_id}' and pwd = '{g_pw}'")
+        result = cur.fetchone()
+
+        if result:
+            cur.execute(f"INSERT INTO pha(card, cardpwd,id,pw) VALUES ("
+                        f"{g_card}, {g_cardpwd}, '{g_id}', '{g_pw}')")
+            st.success('결제에 성공했습니다.')
+
+            con.commit()
+        else:
+            st.error('회원 정보가 올바르지 않습니다.')
+
+
+
+
+
+
+
+
+
+
+
 
 
 
